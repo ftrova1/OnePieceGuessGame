@@ -6,7 +6,7 @@ import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 const font = localFont({
-  src: "../../public/fonts/one_piece_font.ttf",
+  src: "../../public/fonts/op_font.ttf",
   variable: "--font-one-piece",
 });
 
