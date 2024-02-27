@@ -1,23 +1,18 @@
 import Image from "next/image";
 
-export function CharacterRow({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
+export function CharacterRow({ character }: { character: any }) {
   return (
-    <div className="flex gap-2 items-start">
+    <div className="flex items-center">
       <Image
-        alt={`${label}`}
+        id={`charImg_${character.id}`}
+        alt={`${character.name}`}
         width={40}
         height={40}
-        src={`/images/chars/${value}.webp`}
+        src={`${character.imgPayload}`}
         className="border-2 border-black rounded-md"
       />
       <div className="flex flex-col ml-3">
-        <span className="text-4xl font-bold">{label}</span>
+        <span className="text-4xl font-bold">{character.name}</span>
       </div>
     </div>
   );

@@ -1,46 +1,45 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { CharacterSelector } from "./CharacterSelector";
+import CharacterInput from "@/app/CharacterInput";
+import useGuessesStore from "@/stores/guessesStore";
+import Character from "@/types/character";
+import { getAnswerIndexToday } from "@/utils/timeUtilities";
 import { GuessedAnswers } from "./GuessedAnswers";
 import { SilhouetteForm } from "./SilhouetteForm";
 
-export type Answer = {
-  characterName: string;
-  isCorrect: boolean;
-};
+const dayIndex = getAnswerIndexToday();
 
 export function SilhouetteGuess() {
-  const [answers, setAnswers] = useState<Answer[]>([]);
-  const [gameFinished, setGameFinished] = useState<boolean>(false);
-  const [blurAmount, setBlurAmount] = useState<number>(15);
+  // Reset local storage if the date has changed
+  const localQuestionIndex = useGuessesStore((state) => state.questionIndex);
+  const setQuestionIndex = useGuessesStore((state) => state.setQuestionIndex);
+  const removaAllGuesses = useGuessesStore((state) => state.removaAllGuesses);
+  if (dayIndex !== localQuestionIndex) {
+    setQuestionIndex(dayIndex);
+    removaAllGuesses();
+  }
 
-  const addAnswer = (answer: Answer) => {
-    if (answer.characterName == answers.at(-1)?.characterName) return;
-    setAnswers((prev) => [...prev, answer]);
-    setGameFinished(answer.isCorrect);
-    setBlurAmount(blurAmount - blurAmount * 0.1);
-    localStorage.setItem("answers", JSON.stringify(answers));
-  };
+  const blurAmount: number = useGuessesStore((state) => {
+    return state.silhouetteBlurAmount;
+  });
+  const guessedCharacters: Character[] = useGuessesStore(
+    (state) => state.guessedCharacters
+  );
 
-  useEffect(() => {
-    const savedAnswers = localStorage.getItem("answers");
-    if (savedAnswers) {
-      setAnswers(JSON.parse(savedAnswers));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (gameFinished) setBlurAmount(0);
-  }, [gameFinished]);
+  const handleCharacterGuess = useGuessesStore((state) => state.addGuess);
 
   return (
     <>
       <div className="flex-col bg-red-500 border-2 border-gray-200 text-center text-white items-center justify-center p-4">
         <SilhouetteForm blurAmount={blurAmount} />
       </div>
-      <CharacterSelector addAnswer={addAnswer} gameFinished={gameFinished} />
-      <GuessedAnswers answers={answers} />
+      <div className="select-container mb-10 mt-8">
+        <CharacterInput
+          handleGuessSubmission={handleCharacterGuess}
+          guessedCharacters={guessedCharacters}
+        />
+      </div>
+      <GuessedAnswers guessedCharacters={guessedCharacters} />
     </>
   );
 }

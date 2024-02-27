@@ -15,13 +15,19 @@ export const metadata: Metadata = {
   description: "Guess Who - Anime",
 };
 
+export const backGroundImage = {
+  background:
+    "url(https://images5.alphacoders.com/132/1329624.png) no-repeat 50% fixed",
+  backgroundSize: "cover",
+};
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="light">
+    <html lang="en" className="light" style={backGroundImage}>
       <body
         className={cn(
           "min-h-screen antialiased grainy",
